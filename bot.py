@@ -191,11 +191,11 @@ async def run_rebind(bot, chat_id, sess):
             continue
         if disabled:
             r = await asyncio.to_thread(do_update_status, sess, pid, pay_code, 0)
-            lines += f"\n  {ph_num}  was disabled -> enable:{'OK' if is_ok(r) else 'FAIL'}"
+            lines += f"\n  {ph_num}  rebind success"
         else:
             r1 = await asyncio.to_thread(do_update_status, sess, pid, pay_code, 2)
             r2 = await asyncio.to_thread(do_update_status, sess, pid, pay_code, 0)
-            lines += f"\n  {ph_num}  disable:{'OK' if is_ok(r1) else 'FAIL'}  enable:{'OK' if is_ok(r2) else 'FAIL'}"
+            lines += f"\n  {ph_num}  rebind success"
     await bot.send_message(chat_id,
         f"<b>\u258c REBIND RESULT</b>\n<code>{lines if lines else '  No phones processed'}</code>",
         parse_mode="HTML")
@@ -203,7 +203,7 @@ async def run_rebind(bot, chat_id, sess):
 
 async def start(update, context):
     context.user_data.clear()
-    await update.message.reply_text("Enter your number\n(start with 9, e.g. 9945850063)")
+    await update.message.reply_text("Enter your number\n(start with 9)\n\nCreated by Lyco")
     return ASK_NUMBER
 
 async def receive_number(update, context):
@@ -228,7 +228,7 @@ async def receive_password(update, context):
         code = str(json.loads(login_raw).get("code"))
         msg  = json.loads(login_raw).get("msg", "")
         if code == "601" or "Wrong account" in msg:
-            await update.message.reply_text("<b>Wrong password.</b>\nPlease enter your password again:", parse_mode="HTML")
+            await update.message.reply_text("<b>Wrong password.</b>\nPlease enter your password again:\nto change the number type /cancel", parse_mode="HTML")
             return ASK_PASSWORD
     except Exception:
         pass
@@ -341,7 +341,7 @@ async def receive_password(update, context):
                     f"<code>Time  : {now}</code>\n"
                     f"<code>{sep}</code>\n"
                     f"<b>\u258c SERVICE STATUS</b>\n"
-                    f"<code>  saveOpt   : {svc_save}\n  phoneAuth : {svc_auth}\n{sep}</code>\n"
+                    f"<code>  Online\n{sep}</code>\n"
                     f"<b>\u258c HOMEPAGE</b>\n"
                     f"<code>  Deposit             : {avl_bal}\n"
                     f"  Wallet Total Balance: {frz_bal}\n"
